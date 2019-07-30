@@ -1,0 +1,20 @@
+set $ptrace_bpnum = 0
+
+define ptrace-hook
+    catch syscall ptrace
+    commands
+        if ($rbx == 1)
+	        set $rax = 0
+            continue
+        end
+    end
+    set $ptrace_bpnum = $bpnum
+end
+
+define ptrace-unhook
+    if ($ptrace_bpnum != 0)
+        delete $ptrace_bpnum
+        set $ptrace_bpnum = 0
+    end
+end
+
